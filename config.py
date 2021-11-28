@@ -79,19 +79,27 @@ def makeroot(name):
     photo_dire  = "../photo/"
     output_dire = "../data/"
     #photo_dire  = "../photo/"
-    #output_dire = "../photo/"
+    output_dire = "/Users/hikaru/Desktop/BEX/software/data/"
     fmt         = ".jpg"
 
 
-    dataname           = photo_dire+name+fmt
+    dataname           = name
 
-    output_hue         = output_dire+name+"_hue.txt"
-    output_gray        = output_dire+name+"_gray.txt"
-    output_saturation  = output_dire+name+"_saturation.txt"
+    output_hue         = "./hue.txt"
+    output_gray        = "./gray.txt"
+    output_saturation  = "./saturation.txt"
 
-    output_blue        = output_dire+name+"_blue.txt"
-    output_green       = output_dire+name+"_green.txt" 
-    output_red         = output_dire+name+"_red.txt"
+    output_blue        = "./blue.txt"
+    output_green       = "./green.txt" 
+    output_red         = "./red.txt"
+
+    #output_hue         = output_dire+name+"_hue.txt"
+    #output_gray        = output_dire+name+"_gray.txt"
+    #output_saturation  = output_dire+name+"_saturation.txt"
+
+    #output_blue        = output_dire+name+"_blue.txt"
+    #output_green       = output_dire+name+"_green.txt" 
+    #output_red         = output_dire+name+"_red.txt"
 
     print("===Loading===",dataname)
     pixel = Img(dataname)
@@ -123,8 +131,14 @@ def makeroot(name):
 
 
 
+    
+    print("name=",name)
+
+    name = dataname.split('/')
+    name = name[-1]
+    name = name.split(".")
     fout = open("basename.txt","w")
-    fout.write(output_dire+name+"\n")
+    fout.write(output_dire+name[0]+"\n")
     fout.close()
     
     np.savetxt(output_blue,blue,fmt = "%d")
@@ -161,246 +175,134 @@ def makeroot(name):
 
 
 
-def find_error(name):
+
+
+
+def Print(dataname,thr):
+    
+    pixel = Img(dataname)
+
+    bgr = pixel.read()
+    hsv = pixel.hsv()
+    satu = hsv[:,:,1]
+    row,col,color = bgr.shape
+
+
+    if row == 3648:
+        # rotate photo
+        print("Rotate photo")
+        pixel.rotate()
+        bgr = pixel.read();
+
+
+   
+ 
+    thr = int(thr)
+    ret,satu = cv2.threshold(satu,70,255,cv2.THRESH_BINARY)
 
     
 
+    name = dataname.split("/")
+    name = name[-1]
+    print(name)
+    output_dire = "Users/hikaru/Desktop/BEX/software/output/"
+    cv2.imwrite("../output/"+str(thr)+"_"+name,satu)
 
-    photo_dire  = "../photo/"
-    output_dire = "../data/"
-    dire = "../photo/"
-    fmt         = ".jpg"
+    cv2.imshow("print",satu)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+#    cv2.imwrite(output_dire+"Binary"+str(thr)+name,satu)
+
+
     
-    dataname    = photo_dire+name+fmt
-    output_hue  = "./hue.txt"
+def Detection(dataname,thr,sigma):
 
-    print("---Reading image---")
+    print("Read the {}".format(dataname))
 
     pixel = Img(dataname)
 
 
 
-
-    hsv   = pixel.hsv()
-
-    print("---Extract Hue---")
+    # Read the HSV
 
 
-    hue    = hsv[:,:,0]
+    bgr = pixel.read()
+    hsv = pixel.hsv()
+    satu = hsv[:,:,1]
+    row,col,color = bgr.shape
 
-    print("---Write Out hue.txt---")
+    if row == 3648:
+        # rotate photo
+        print("Rotate photo")
+        pixel.rotate()
+        bgr = pixel.read();
 
-    fout = open("HuePhotoName.txt","w")
-    fout.write(name+"\n")
+
+#print(hsv[0,0,:])
+
+
+# Binary
+#ret,satu = cv2.threshold(satu,70, 255, cv2.THRESH_BINARY)
+# beat threshold is 70?
+
+#Write out saturation data
+    cv2.imwrite("../output/Binary.jpg",satu)
+
+#np.savetxt("./satudata.txt",satu,fmt="%d")
+
+
+
+
+#Write out photoname and parameter
+
+    
+    times = sigma
+
+    fout = open("setting.txt","wt")
+
+    fout.write(dataname+"\n")
+    fout.write(str(thr)+"\n")
+    fout.write(str(times)+"\n")
+
     fout.close()
 
-    np.savetxt(output_hue,hue,fmt = "%d")
-
-
-    print("---Run find_error.c---")
-    cmd1 = ["root","-q","-l","find_error.c"]
-    cmd2 = ["rm","./hue.txt"]
-    cmd3 = ["rm","./HuePhotoName.txt"]
-
-    sp.run(cmd1)
-    sp.run(cmd2)
-    sp.run(cmd3)
-
-    print("---Finsh---")
 
 
 
-def marking(name):
 
-
-       
-    photo_dire  = "../photo/"
-    fmt = ".jpg"   
-    dataname = photo_dire+name+fmt
-    print("---Loading--- ",dataname)
-
-    pixel = Img(dataname)
-
-
-    print("---Extract HSV data---")
-
-    hsv = pixel.hsv()
-
-    hue = hsv[:,:,0]
-
-
-    print("---Write Out Hue data---")
-
-    np.savetxt("./hue.txt",hue,fmt="%d")
-
-    
-    print("---Compile macro---")
-
-    cmd = ["g++","judge.cpp","-o","judge"]
-
-    sp.run(cmd)
-
-
-    print("---Run macro---")
-
-    cmd1 = ["./judge"]
-
+# Run Macro
+    cmd1 = ["./RUN"]
     sp.run(cmd1)
 
 
+# Read the BadPixel
 
-    print("---Loading center point data---")
 
-#    center = np.loadtxt("center.txt",dtype = "int")
-    center = np.loadtxt("outvalue.txt",dtype = "int")
+    center = np.loadtxt("BadPixel.txt",dtype = "int")
+
+# Marking 
 
     print("---Marking center point---")
     count = 0
     for point in center:
-        
-        cv2.circle(hsv,point,50,(0,255,255),3)
-        print(point)
+        cv2.circle(bgr,point,80,(0,0,255),20)
+        #print(point)
 
-    #print("python count",count)
+#Output photo
+    
     print("---Output image---")
-    bgr = cv2.cvtColor(hsv,cv2.COLOR_HSV2BGR)
-
-    cv2.imwrite("../output/"+name+".jpg",bgr)
 
 
-
-def ratio(name):
-
-
-
-    photo_dire  = "../photo/"
-    output_dire = "../data/"
-    dire = "../photo/"
-    fmt         = ".jpg"
-    
-    dataname    = photo_dire+name+fmt
-    output_hue  = "./hue.txt"
-
-    print("---Reading image---")
-
-    pixel = Img(dataname)
-
-
-
-
-    hsv   = pixel.hsv()
-
-    print("---Extract Hue---")
-
-
-    hue    = hsv[:,:,0]
-
-    print("---Write Out hue.txt---")
-
-    fout = open("HuePhotoName.txt","w")
-    fout.write(name+"\n")
-    fout.close()
-
-    np.savetxt(output_hue,hue,fmt = "%d")
-
-    print("Run CountBunch")
-
-    cmd1 = ["root","-q","-l","CountBunch.C"]
-
-    sp.run(cmd1)
-
-
-
-    center = np.loadtxt("ratio.txt",dtype = "int")  
-    pitch = np.loadtxt("pitch.txt",dtype = "int")  
-
-
-
-    print("---Marking point---")
-    
-    for point in center:
-        
-        cv2.circle(hsv,point,35,(120,255,255),3)
-    
-    for point in pitch:
-        
-        cv2.circle(hsv,point,5,(200,255,255),1)
-        
-
-    #print("python count",count)
-    print("---Output image---")
-    bgr = cv2.cvtColor(hsv,cv2.COLOR_HSV2BGR)
-
-    cv2.imwrite("../output/"+name+"mark.jpg",bgr)
-
-    print("finsh")
-
-    cmd2 = ["rm","./hue.txt"]
-    cmd3 = ["rm","./HuePhotoName.txt"]
-
-
-    sp.run(cmd2)
-    sp.run(cmd3)
+    name = dataname.split('/')
+    name = name[-1]
+    cv2.imwrite("../output/"+name,bgr)
+    cv2.imshow("result",bgr)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
 
 
     
 
 
-
-
-def sim(name):
     
-
-    photo_dire  = "../photo/"
-    output_dire = "../data/"
-    dire = "../photo/"
-    fmt         = ".jpg"
-    
-    dataname    = photo_dire+name+fmt
-
-
-    print("---Reading image---")
-
-    pixel = Img(dataname)
-
-    hsv   = pixel.hsv()
-    row,col,calor = hsv.shape
-    #print (hsv)
-
-    ini = hsv[2000,:,:]
-    ini[:,0]= np.where((ini[:,0]<50)|(ini[:,0]>120),10,90)
-    #ini[:,1]= np.where((ini[:,1]<50)|(ini[:,1]>120),10,90)
-    ini[:,1] = 100
-    ini[:,2] = 200
-    for i in range(row):
-        hsv[i,:,:] = ini
-
-    delpixel =10
-    for i in range(10):
-
-        row = random.randint(1000,5000)
-        col = random.randint(500,3000)
-    #cv2.circle(hsv,(col,row),20,(100,100,100),3)
-        for j in range(-delpixel,delpixel):
-
-            for k in range(-delpixel,delpixel):
-        
-                hsv[row+k,col+j,0] = 90  # 90 is mean of LCP distuributon Hue
-                hsv[row+k,col+j,1] = 100  # 35 is mean of LCP distuributon Satu
-                hsv[2000+k,1000+j,0] = 90
-                hsv[2000+k,1000+j,1] = 100
-    bgr = cv2.cvtColor(hsv,cv2.COLOR_HSV2BGR)
-    cv2.imwrite(photo_dire+name+"_SIM.JPG",bgr)
-
-    #cmd1 = ["python","run.py","-r"]
-    #cmd2 = ["python","run.py","-s"]
-
-
-
-    #sp.run(cmd1)
-    #sp.run(cmd2)
-
-
-
-
