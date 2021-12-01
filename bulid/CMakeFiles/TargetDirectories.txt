@@ -1,0 +1,3 @@
+/Users/hikaru/Desktop/BEX/software/BEC_software/bulid/CMakeFiles/RUN.dir
+/Users/hikaru/Desktop/BEX/software/BEC_software/bulid/CMakeFiles/edit_cache.dir
+/Users/hikaru/Desktop/BEX/software/BEC_software/bulid/CMakeFiles/rebuild_cache.dir
