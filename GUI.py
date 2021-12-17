@@ -79,26 +79,26 @@ SigmaStr = tk.StringVar()
 
 # set initial parameter.defult parameter
 
-NameStr.set("/Users/hikaru/Desktop/BEX/software/photo/20211102110525.jpg")
+NameStr.set("")
 ThrStr.set("70")
 SigmaStr.set("5")
 
 DirEn = tk.Entry(width = 45)
-NameEn = tk.Entry(width = 45,textvariable = NameStr)
+NameEn = tk.Entry(width = 65,textvariable = NameStr)
 SetThrEn = tk.Entry(textvariable = ThrStr,width = 5)
 SetSigmaEn = tk.Entry(textvariable = SigmaStr,width = 5)
 
 #DirEn.place(x =110,y = 40)
 NameEn.place(x =110,y = 70)
-SetThrEn.place(x=110,y=130);
-SetSigmaEn.place(x=110,y=170);
+SetThrEn.place(x=110,y=130)
+SetSigmaEn.place(x=110,y=170)
 
 
 
 # Button
 
 
-RunBu  = tk.Button(text = "RUN",height = 5,width = 10,command = Detection_clicked,fg='red')
+RunBu  = tk.Button(text = "RUN",height = 5,width = 10,command = Detection_clicked,fg='black',bg = 'red')
 BrowseBu = tk.Button(text = "Browse",command = filedialog_clicked )
 ROOTBu = tk.Button(text = "ROOT",height = 5,width = 10,command = makeroot_clicked)
 PrintBu = tk.Button(text = "BINARY",height = 5,width = 10,command = Print_clicked)
