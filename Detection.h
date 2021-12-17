@@ -273,12 +273,12 @@ void Detection(){
   // Write out
 
 
-  ofstream ofs("/Users/hikaru/Desktop/BEX/software/BEC_software/BadPixel.txt");
+  ofstream ofs("BadPixel.txt");
 
   for(int i =0;i<v_recordX.size();i++){
 
     ofs<<v_recordX[i]<<"\t"<<v_recordY[i]<<endl;
-    
+    cout<<v_recordX[i]<<"\t"<<v_recordY[i]<<endl;
   }//for int i=0;
 
  
