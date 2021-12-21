@@ -11,7 +11,10 @@ using namespace std;
 
 void Cycle(vector<int> &v_input, vector<int> &v_output,vector<int> &v_center){
 
+  ///counting White Pixel
 
+
+  
   int size = v_input.size();
 
   bool veto = true;
@@ -172,6 +175,114 @@ int Binary(int val,int thr){
 
 
 
+void dilation(vector<int> &v_input){
+
+  vector<int> v_index; // record the index of the white pixel. 
+
+  int WhitePixel = 255;
+
+  for(int i =0;i<v_input.size();i++){
+
+
+    if(WhitePixel == v_input[i]){
+
+      v_index.push_back(i);
+      
+    }//if White
+    
+       
+  }// for int i = 0;
+
+
+
+  for(int i = 0;i<v_index.size();i++){
+
+    
+    if(v_index[i] == 0){ // start pixel
+
+      v_input[v_index[i]+1]  = WhitePixel;
+      
+    }// if v_index[i] == 0
+
+    else if (v_index[i] == (v_input.size()-1)){ // end  pixel
+
+      v_input[v_index[i]-1]  = WhitePixel;
+
+      
+    }// else if v_index[i] == (v_input.size-1)
+    
+    else{
+
+      v_input[v_index[i]+1]  = WhitePixel;
+      v_input[v_index[i]-1]  = WhitePixel;
+      
+    }//else
+    
+    
+  }//for int i = 0; i<v_index.size()
+
+  
+  
+
+
+  
+}// void dilation
+
+
+void erosion(vector<int> &v_input){
+
+  vector<int> v_index; // record the index of the Black pixel. 
+
+  int BlackPixel = 0;
+
+  for(int i =0;i<v_input.size();i++){
+
+
+    if(BlackPixel == v_input[i]){
+
+      v_index.push_back(i);
+      
+    }//if White
+    
+       
+  }// for int i = 0;
+
+
+
+  for(int i = 0;i<v_index.size();i++){
+
+    
+    if(v_index[i] == 0){ // start pixel
+
+      v_input[v_index[i]+1]  = BlackPixel;
+      
+    }// if v_index[i] == 0
+
+    else if (v_index[i] == (v_input.size()-1)){ // end  pixel
+
+      v_input[v_index[i]-1] = BlackPixel;
+
+      
+    }// else if v_index[i] == (v_input.size-1)
+    
+    else{
+
+      v_input[v_index[i]+1]  = BlackPixel;
+      v_input[v_index[i]-1]  = BlackPixel;
+      
+    }//else
+    
+    
+  }//for int i = 0; i<v_index.size()
+
+  
+  
+
+
+  
+}// void dilation
+
+
 
 
 
@@ -250,7 +361,10 @@ void Detection(){
     bool STRIP = (v_strip.size() == ColSize);
     
     if(STRIP){
-    
+
+      
+      dilation(v_strip);
+      erosion(v_strip);
       Cycle(v_strip,v_length,v_center);
       Judge(v_length,v_recordX,v_recordY,v_center,row,times);
     
