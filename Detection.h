@@ -9,7 +9,7 @@
 #include <string>
 using namespace std;
 
-void Cycle(vector<int> &v_input, vector<int> &v_output,vector<int> &v_center){
+void Cycle(vector<int> &v_input, vector<int> &v_output,vector<int> &v_center,int mode){
 
   ///counting White Pixel
 
@@ -22,6 +22,10 @@ void Cycle(vector<int> &v_input, vector<int> &v_output,vector<int> &v_center){
   int count =0;
 
   int start,end = 0;
+
+  if( mode == 255){
+
+    
   
   for(int i =0;i<size;i++){
 
@@ -59,13 +63,58 @@ void Cycle(vector<int> &v_input, vector<int> &v_output,vector<int> &v_center){
       count = 0;
 
     }//if trigger
+  }
+
+  } /// if mode
+ 
+    
+  if( mode == 0){
+
+    
+  
+  for(int i =0;i<size;i++){
+
+
+    if((veto) &&(v_input[i]==0)){
+      
+      trigger = true;
+      veto = false;
+      start = i;
+    
+    } // if veto
+
+
+
+    if((trigger) && (v_input[i]) == 0){
+
+      count++;
+      
+
+    }//if trigger
 
 
     
     
+    if((trigger) && (v_input[i]) == 255){
+
+      veto  = true;
+      trigger = false;
+      end = i;
+      //      int CenterPixel = (end+start)/2;
+      int CenterPixel = end;
+      v_output.push_back(count);
+      v_center.push_back(CenterPixel);
+      
+      count = 0;
+
+    }//if trigger
+
+
+ 
     
   }//for
   
+  } /// if mode
   
 
 
@@ -285,6 +334,35 @@ void erosion(vector<int> &v_input){
 
 
 
+void Reverse(vector< int > &v_input){
+
+  for (int i = 0 ; i < v_input.size() ;i++){
+
+    if(v_input[i] == 255 ){ // if white pixel
+
+      v_input[i] = 0; // black
+      
+    }// if
+
+    else{ // is black
+
+      v_input[i] = 255; // black
+
+      
+      
+    }//else
+    
+  }// for
+
+  
+  
+  
+}// Reverse
+
+
+
+
+
 
 void Detection(){
 
@@ -305,6 +383,7 @@ void Detection(){
   vector <int> v_recordY;
 
 
+  string outputname;
 
 
   // read the photoname and parameter
@@ -312,7 +391,7 @@ void Detection(){
 
   ifstream ifs("./setting.txt");
 
-  ifs >> dataname >> thr >> times;
+  ifs >> dataname >> thr >> times >> outputname;
 
 
 
@@ -330,15 +409,27 @@ void Detection(){
   img = cv::imread(dataname);
 
 
+  // rotate
+
+  if(img.rows == 3648 ){
+
+    cv::rotate(img,img,cv::ROTATE_90_COUNTERCLOCKWISE ) ;
+    cv::imwrite(dataname,img);
+    img = cv::imread(dataname);
+
+    
+  }// if hsv.rows == 
+
+
   // convert BGR to HSV.
   cv::cvtColor(img,hsv,cv::COLOR_BGR2HSV);
 
   // calculate total pixel number
 
-
+  
   double TotalPixelNum = (hsv.rows)*(hsv.cols);
   
-
+  
 
   // Running pixel
 
@@ -350,6 +441,11 @@ void Detection(){
     int row=  num / ColSize;
     num++;
 
+    if(row%2 == 0){
+      continue;
+    }//if
+    
+    //  cout << "row=" << row << endl; 
     int satu = hsv.at<cv::Vec3b>(row,col)[1]; // 0 ,1 ,2 means hue,saturation,gray
 
     
@@ -365,12 +461,23 @@ void Detection(){
       
       dilation(v_strip);
       erosion(v_strip);
-      Cycle(v_strip,v_length,v_center);
-      Judge(v_length,v_recordX,v_recordY,v_center,row,times);
-    
+
+      Cycle(v_strip,v_length,v_center,255); // count White line pixel
+      Judge(v_length,v_recordX,v_recordY,v_center,row,times); // write out Bad pixel
+
+      v_length.clear(); // inti
       v_center.clear(); // init
+
+      Reverse(v_strip); // white -> black , black -> white
+
+      Cycle(v_strip,v_length,v_center,0); // count White line pixel
+      Judge(v_length,v_recordX,v_recordY,v_center,row,times); // write out Bad pixel
+      
+
+      
       v_strip.clear();  // init
       v_length.clear(); // inti
+      v_center.clear(); // init
 
 
     }//if STRIP
@@ -392,11 +499,33 @@ void Detection(){
   for(int i =0;i<v_recordX.size();i++){
 
     ofs<<v_recordX[i]<<"\t"<<v_recordY[i]<<endl;
-    cout<<v_recordX[i]<<"\t"<<v_recordY[i]<<endl;
+    //cout<<v_recordX[i]<<"\t"<<v_recordY[i]<<endl;
   }//for int i=0;
 
- 
 
-}// void Detrction
+
+  //marking
+
+  for(int i =0;i < v_recordX.size(); i++){
+
+    cv::circle(img,cv::Point(v_recordX[i],v_recordY[i]),50,cv::Scalar(255,255,0) ,5);
+    
+    
+  }// for int i
+
+
+  // output
+
+  //  string outputdir = "/Users/hikaru/Desktop/BEX/software/output/";
+
+
+  cout << outputname << endl;
+
+  cv::imwrite(outputname,img);
+  
+
+  
+
+}   // void Detrction
 
 #endif // BEC_SOFTWARE_DETECTION_H
