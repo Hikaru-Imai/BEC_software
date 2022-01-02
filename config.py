@@ -185,6 +185,7 @@ def Print(dataname,thr):
     bgr = pixel.read()
     hsv = pixel.hsv()
     satu = hsv[:,:,1]
+    gray = hsv[:,:,2]
     row,col,color = bgr.shape
 
 
@@ -198,15 +199,17 @@ def Print(dataname,thr):
    
  
     thr = int(thr)
-    ret,satu = cv2.threshold(satu,70,255,cv2.THRESH_BINARY)
+    ret,satu1 = cv2.threshold(satu,50,255,cv2.THRESH_BINARY)
+    ret,satu2 = cv2.threshold(satu,100,255,cv2.THRESH_BINARY)
+    ret,gray = cv2.threshold(gray,240,255,cv2.THRESH_BINARY)
 
-    
+    np.savetxt("./sataBINARY.txt",satu,fmt = "%d")
 
     name = dataname.split("/")
     name = name[-1]
     print(name)
     output_dire = "Users/hikaru/Desktop/BEX/software/output/"
-    cv2.imwrite("../output/"+str(thr)+"_"+name,satu)
+    cv2.imwrite("../output/"+str(thr)+"_"+name,satu1)
 
     cv2.imshow("print",satu)
     cv2.waitKey(0)
@@ -218,55 +221,21 @@ def Print(dataname,thr):
 def Detection(dataname,thr,sigma):
 
     print("Read the {}".format(dataname))
-
-    pixel = Img(dataname)
-
-
-
-    # Read the HSV
-
-
-    bgr = pixel.read()
-    hsv = pixel.hsv()
-    satu = hsv[:,:,1]
-    row,col,color = bgr.shape
-
-    if row == 3648:
-        # rotate photo
-        print("Rotate photo")
-        pixel.rotate()
-        bgr = pixel.read();
-
-
-#print(hsv[0,0,:])
-
-
-# Binary
-#ret,satu = cv2.threshold(satu,70, 255, cv2.THRESH_BINARY)
-# beat threshold is 70?
-
-#Write out saturation data
-    cv2.imwrite("../output/Binary.jpg",satu)
-
-#np.savetxt("./satudata.txt",satu,fmt="%d")
-
-
-
-
-#Write out photoname and parameter
-
     
     times = sigma
 
+    dataname_ary = dataname.split("/")
+    
+    outputname = "/Users/hikaru/Desktop/BEX/software/output/C__"+dataname_ary[-1]
+    
     fout = open("setting.txt","wt")
-
+    
     fout.write(dataname+"\n")
     fout.write(str(thr)+"\n")
     fout.write(str(times)+"\n")
-
+    fout.write(outputname+"\n")
+    
     fout.close()
-
-
 
 
 
@@ -274,35 +243,3 @@ def Detection(dataname,thr,sigma):
     cmd1 = ["./RUN"]
     sp.run(cmd1)
 
-
-# Read the BadPixel
-
-
-    center = np.loadtxt("BadPixel.txt",dtype = "int")
-
-# Marking 
-
-    print("---Marking center point---")
-    count = 0
-    for point in center:
-        cv2.circle(bgr,point,80,(0,0,255),20)
-        #print(point)
-
-#Output photo
-    
-    print("---Output image---")
-
-
-    name = dataname.split('/')
-    name = name[-1]
-    cv2.imwrite("../output/"+name,bgr)
-    cv2.imshow("result",bgr)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
-
-
-    
-
-
-    
