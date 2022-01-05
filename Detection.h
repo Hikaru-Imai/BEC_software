@@ -508,7 +508,7 @@ void Detection(){
 
   for(int i =0;i < v_recordX.size(); i++){
 
-    cv::circle(img,cv::Point(v_recordX[i],v_recordY[i]),50,cv::Scalar(255,255,0) ,5);
+    cv::circle(img,cv::Point(v_recordX[i],v_recordY[i]),75,cv::Scalar(0,0,255) ,5);
     
     
   }// for int i
