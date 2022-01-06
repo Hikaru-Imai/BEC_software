@@ -8,7 +8,7 @@
 #include <math.h>
 #include <string>
 #include <time.h>
-#include <sys/time.h>
+
 using namespace std;
 
 void Cycle(vector<int> &v_input, vector<int> &v_whitelength,vector<int> &v_whitecenter,vector<int> &v_blacklength,vector<int> &v_blackcenter){
@@ -381,13 +381,6 @@ void Detection(){
   string outputname;
 
 
-
-  // define time
-
-  struct timeval mytime;
-  struct tm *t_st;
-
-
   // read the photoname and parameter
 
 
@@ -407,11 +400,7 @@ void Detection(){
   cv::Mat hsv;
 
   // read the photo
-
-  gettimeofday(&mytime,NULL);
-  t_st = localtime(&mytime.tv_sec);
-  //printf("%02d:02d:02d\n",t_st->tm_hour,t_st->tm_min,t_st->tm_sec );
-  cout << " Read " << "\t" << t_st->tm_hour << ":" << t_st->tm_min << ":" << t_st->tm_sec <<":"<< mytime.tv_usec<<endl; 
+  cout << "Input" << "\t" << dataname << endl;
   img = cv::imread(dataname);
   
 
@@ -513,12 +502,7 @@ void Detection(){
   //  string outputdir = "/Users/hikaru/Desktop/BEX/software/output/";
 
   cv::imwrite(outputname,img);
-  gettimeofday(&mytime,NULL);
-  t_st = localtime(&mytime.tv_sec);
-  //printf("%02d:02d:02d\n",t_st->tm_hour,t_st->tm_min,t_st->tm_sec );
-  cout << " OutPut time " << "\t"  << t_st->tm_hour << ":" << t_st->tm_min << ":" << t_st->tm_sec <<":"<< mytime.tv_usec<<endl; 
-
-  
+  cout <<"OutPut"<<"\t" <<outputname << endl;
 
 }   // void Detrction
 
