@@ -226,8 +226,8 @@ def Detection(dataname,thr,sigma):
 
     dataname_ary = dataname.split("/")
     
-    outputname = "/Users/hikaru/Desktop/BEX/software/output/C__"+dataname_ary[-1]
-    
+    #outputname = "/Users/hikaru/Desktop/BEX/software/output/C__"+dataname_ary[-1]
+    outputname = "C:/Users/sphen/Desktop/BEC/output/C__"+dataname_ary[-1]
     fout = open("setting.txt","wt")
     
     fout.write(dataname+"\n")
@@ -240,6 +240,7 @@ def Detection(dataname,thr,sigma):
 
 
 # Run Macro
-    cmd1 = ["./RUN"]
+    #cmd1 = ["./RUN"]
+    cmd1 = ["./Detection.exe"]
     sp.run(cmd1)
 
