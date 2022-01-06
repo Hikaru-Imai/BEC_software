@@ -7,116 +7,105 @@
 #include <vector>
 #include <math.h>
 #include <string>
+#include <time.h>
+#include <sys/time.h>
 using namespace std;
 
-void Cycle(vector<int> &v_input, vector<int> &v_output,vector<int> &v_center,int mode){
+void Cycle(vector<int> &v_input, vector<int> &v_whitelength,vector<int> &v_whitecenter,vector<int> &v_blacklength,vector<int> &v_blackcenter){
 
   ///counting White Pixel
 
 
   
-  int size = v_input.size();
-
-  bool veto = true;
-  bool trigger = false;
-  int count =0;
-
-  int start,end = 0;
-
-  if( mode == 255){
-
-    
-  
-  for(int i =0;i<size;i++){
+  int  size    = v_input.size();
+  int WhitePixelStartIndex = 0;
+  int WhitePixelEndIndex   = 0;
 
 
-    if((veto) &&(v_input[i]==255)){
+  for(int i = 0; i < size ; i++){// search start white pixel
+
+    if(v_input[i] == 255 ){
+
+      WhitePixelStartIndex = i;
+      break;
       
-      trigger = true;
-      veto = false;
-      start = i;
-    
-    } // if veto
+    }// if v_input
+        
+  }// for int i = 0 ;
 
-
-
-    if((trigger) && (v_input[i]) == 255){
-
-      count++;
-      
-
-    }//if trigger
-
-
-    
-    
-    if((trigger) && (v_input[i]) == 0){
-
-      veto  = true;
-      trigger = false;
-      end = i;
-      //      int CenterPixel = (end+start)/2;
-      int CenterPixel = end;
-      v_output.push_back(count);
-      v_center.push_back(CenterPixel);
-      
-      count = 0;
-
-    }//if trigger
-  }
-
-  } /// if mode
- 
-    
-  if( mode == 0){
-
-    
-  
-  for(int i =0;i<size;i++){
-
-
-    if((veto) &&(v_input[i]==0)){
-      
-      trigger = true;
-      veto = false;
-      start = i;
-    
-    } // if veto
-
-
-
-    if((trigger) && (v_input[i]) == 0){
-
-      count++;
-      
-
-    }//if trigger
-
-
-    
-    
-    if((trigger) && (v_input[i]) == 255){
-
-      veto  = true;
-      trigger = false;
-      end = i;
-      //      int CenterPixel = (end+start)/2;
-      int CenterPixel = end;
-      v_output.push_back(count);
-      v_center.push_back(CenterPixel);
-      
-      count = 0;
-
-    }//if trigger
-
-
- 
-    
-  }//for
-  
-  } /// if mode
   
 
+
+  for (int i = (size-1) ; i > 1 ; i-- ){// search end white pixel
+
+    
+    if(v_input[i] == 255 ){
+      WhitePixelEndIndex = i;
+      break;
+      
+    }
+    
+    
+  } // for int i = (size-1) ; i < 1 ; i-- 
+
+
+
+  int WhiteLength = 0;
+  int BlackLength = 0;
+  bool WhiteTurn  = true;
+  bool BlackTurn  = false;
+
+  
+  for(int i = WhitePixelStartIndex; i < (WhitePixelEndIndex+1) ; i++){
+
+    bool WhitePixel = (v_input[i] == 255);
+    bool BlackPixel = (v_input[i] ==   0);
+    
+    if(WhitePixel){
+      
+      WhiteLength++;
+    }//if
+    
+
+    if(BlackPixel){
+
+      BlackLength++;
+      
+    } // else
+
+
+    //   cout << "white Length=" << WhiteLength << "\t" << "black length=" << BlackLength << endl; 
+
+    if( (WhiteTurn) && ( BlackPixel )  ){ //Switching white pixel to black pixel
+
+      v_whitelength.push_back( WhiteLength );
+      v_whitecenter.push_back(i); // easy
+      WhiteLength = 0; // init
+
+      WhiteTurn = false;
+      BlackTurn = true;
+      
+      
+    }//  if( (WhiteTurn) && ( BlackPixel )  )
+
+
+
+
+    if( (BlackTurn) && (WhitePixel) ){
+
+      v_blacklength.push_back( BlackLength );
+      v_blackcenter.push_back(i); // easy
+
+      BlackLength = 0; // init
+      WhiteTurn = true;
+      BlackTurn = false;
+      
+      
+    }// if( (BlackTurn) && (WhitePixel) )
+    
+    
+    
+  }// for(int i = WhitePixelStartIndex; i < (WhitePixelEndIndex+1) ; i++)
 
 
 
@@ -376,14 +365,27 @@ void Detection(){
   string dataname = "name";
   int const ColSize = 3648;
   vector <int> v_strip;
-  vector <int> v_length;
-  vector <int> v_center;
+  vector <int> v_whitelength;
+  vector <int> v_whitecenter;
 
-  vector <int> v_recordX;
-  vector <int> v_recordY;
+  vector <int> v_blacklength;
+  vector <int> v_blackcenter;
+
+  vector <int> v_WhiteRecordX;
+  vector <int> v_WhiteRecordY;
+
+  vector <int> v_BlackRecordX;
+  vector <int> v_BlackRecordY;
 
 
   string outputname;
+
+
+
+  // define time
+
+  struct timeval mytime;
+  struct tm *t_st;
 
 
   // read the photoname and parameter
@@ -405,9 +407,13 @@ void Detection(){
   cv::Mat hsv;
 
   // read the photo
-  
-  img = cv::imread(dataname);
 
+  gettimeofday(&mytime,NULL);
+  t_st = localtime(&mytime.tv_sec);
+  //printf("%02d:02d:02d\n",t_st->tm_hour,t_st->tm_min,t_st->tm_sec );
+  cout << " Read " << "\t" << t_st->tm_hour << ":" << t_st->tm_min << ":" << t_st->tm_sec <<":"<< mytime.tv_usec<<endl; 
+  img = cv::imread(dataname);
+  
 
   // rotate
 
@@ -459,26 +465,22 @@ void Detection(){
     if(STRIP){
 
       
-      dilation(v_strip);
-      erosion(v_strip);
+      dilation(v_strip); // noise cut
+      erosion(v_strip); // noise cut
 
-      Cycle(v_strip,v_length,v_center,255); // count White line pixel
-      Judge(v_length,v_recordX,v_recordY,v_center,row,times); // write out Bad pixel
-
-      v_length.clear(); // inti
-      v_center.clear(); // init
-
-      Reverse(v_strip); // white -> black , black -> white
-
-      Cycle(v_strip,v_length,v_center,0); // count White line pixel
-      Judge(v_length,v_recordX,v_recordY,v_center,row,times); // write out Bad pixel
-      
+      Cycle(v_strip,v_whitelength,v_whitecenter,v_blacklength,v_blackcenter); // count White & Black line pixel
+      Judge(v_whitelength,v_WhiteRecordX,v_WhiteRecordY,v_whitecenter,row,times); // write out white Bad pixel
+      Judge(v_blacklength,v_BlackRecordX,v_BlackRecordY,v_blackcenter,row,times); // write out Black Bad pixel
 
       
       v_strip.clear();  // init
-      v_length.clear(); // inti
-      v_center.clear(); // init
 
+      v_whitelength.clear(); // init
+      v_whitecenter.clear(); // init
+
+      v_blacklength.clear(); // init
+      v_blackcenter.clear(); // init
+      //      break;
 
     }//if STRIP
        
@@ -487,42 +489,34 @@ void Detection(){
   }//while
 
 
-
-
-  
-
-  // Write out
-
-
-  ofstream ofs("BadPixel.txt");
-
-  for(int i =0;i<v_recordX.size();i++){
-
-    ofs<<v_recordX[i]<<"\t"<<v_recordY[i]<<endl;
-    //cout<<v_recordX[i]<<"\t"<<v_recordY[i]<<endl;
-  }//for int i=0;
-
-
-
   //marking
 
-  for(int i =0;i < v_recordX.size(); i++){
+  for(int i =0;i < v_WhiteRecordX.size(); i++){
 
-    cv::circle(img,cv::Point(v_recordX[i],v_recordY[i]),75,cv::Scalar(0,0,255) ,5);
+    cv::circle(img,cv::Point(v_WhiteRecordX[i],v_WhiteRecordY[i]),75,cv::Scalar(0,0,255) ,5);
     
     
   }// for int i
 
 
+  for(int i =0;i < v_BlackRecordX.size(); i++){
+
+    cv::circle(img,cv::Point(v_BlackRecordX[i],v_BlackRecordY[i]),100,cv::Scalar(0,255,0) ,5);
+    
+    
+  }// for int i
+
+  
+
   // output
 
   //  string outputdir = "/Users/hikaru/Desktop/BEX/software/output/";
 
-
-  cout << outputname << endl;
-
   cv::imwrite(outputname,img);
-  
+  gettimeofday(&mytime,NULL);
+  t_st = localtime(&mytime.tv_sec);
+  //printf("%02d:02d:02d\n",t_st->tm_hour,t_st->tm_min,t_st->tm_sec );
+  cout << " OutPut time " << "\t"  << t_st->tm_hour << ":" << t_st->tm_min << ":" << t_st->tm_sec <<":"<< mytime.tv_usec<<endl; 
 
   
 
