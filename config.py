@@ -7,6 +7,7 @@ import datetime
 import matplotlib.pyplot as plt
 import subprocess as sp
 import random
+import os
 from  PIL  import Image
 
 class Img():
@@ -226,8 +227,8 @@ def Detection(dataname,thr,sigma):
 
     dataname_ary = dataname.split("/")
     
-    #outputname = "/Users/hikaru/Desktop/BEX/software/output/C__"+dataname_ary[-1]
-    outputname = "C:/Users/sphen/Desktop/BEC/output/C__"+dataname_ary[-1]
+    outputname = "/Users/hikaru/Desktop/BEX/software/output/C__"+dataname_ary[-1]
+    #outputname = "C:/Users/sphen/Desktop/BEC/output/C__"+dataname_ary[-1]
     fout = open("setting.txt","wt")
     
     fout.write(dataname+"\n")
@@ -240,7 +241,71 @@ def Detection(dataname,thr,sigma):
 
 
 # Run Macro
-    #cmd1 = ["./RUN"]
-    cmd1 = ["./Detection.exe"]
+    cmd1 = ["./RUN"] 
+    #cmd1 = ["./Detection.exe"]
     sp.run(cmd1)
 
+
+
+
+
+def BackEndMode(thr,sigma,TargetDir):
+    print("Back End mode")
+    
+    # write out setting file
+
+
+    # Loop
+
+    FileNumInTarDir = []
+    FileNameInTarDir = os.listdir(TargetDir) # init list
+    debugcount = 0
+
+    while True:
+
+        FileNum = len(os.listdir(TargetDir))
+        print(FileNum)
+        FileNumInTarDir.append(FileNum)
+        
+        debugcount = debugcount + 1
+        print("debugcount=",debugcount)
+        if len(FileNumInTarDir) > 2 :
+
+            del FileNumInTarDir[0] # delete first index
+            print(FileNumInTarDir)
+            print(FileNameInTarDir)
+
+            # input new data case
+            if( FileNumInTarDir[0] != FileNumInTarDir[1]):
+
+
+                NowFileNameInTarDir = os.listdir(TargetDir)
+                difflist = list(set(NowFileNameInTarDir)^set(FileNameInTarDir) )
+                dataname = str(difflist[0])
+                
+                # write out setting file    
+                fout = open("setting.txt","wt")
+
+                outputname = "/Users/hikaru/Desktop/BEX/software/output/C__"+dataname # Mac
+                #outputname = "C:/Users/sphen/Desktop/BEC/output/C__"+dataname # win10 ver
+
+                times = sigma
+                fout.write(dataname+"\n")
+                fout.write(str(thr)+"\n")
+                fout.write(str(times)+"\n")
+                fout.write(outputname+"\n")
+    
+                fout.close()
+
+                print("Run Macro")
+                cmd = ["./RUN"] # for mac
+                #cmd = ["./Detection"] # for win10
+                sp.Popen(cmd)
+
+                FileNameInTarDir = NowFileNameInTarDir
+
+
+        time.sleep(1)
+
+        if debugcount>5:
+            break
