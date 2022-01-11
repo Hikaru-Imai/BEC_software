@@ -361,7 +361,7 @@ void Detection(){
   int val   = 0;
   int num   = 0;
   int thr   = 70;
-  int times = 5;
+  float times = 5;
   string dataname = "name";
   int const ColSize = 3648;
   vector <int> v_strip;
@@ -435,11 +435,9 @@ void Detection(){
     int col = num % ColSize;
     int row=  num / ColSize;
     num++;
-
-    if(row%2 == 0){
+    if((row%2) == 1){
       continue;
     }//if
-    
     //  cout << "row=" << row << endl; 
     int satu = hsv.at<cv::Vec3b>(row,col)[1]; // 0 ,1 ,2 means hue,saturation,gray
 
@@ -483,6 +481,8 @@ void Detection(){
   for(int i =0;i < v_WhiteRecordX.size(); i++){
 
     cv::circle(img,cv::Point(v_WhiteRecordX[i],v_WhiteRecordY[i]),75,cv::Scalar(0,0,255) ,5);
+
+    cout << "White Bad Pixel :" << "\t" << "X-axis=" << v_WhiteRecordX[i] << "\t" <<"y-axis="  <<v_WhiteRecordY[i] << endl; 
     
     
   }// for int i
@@ -491,6 +491,7 @@ void Detection(){
   for(int i =0;i < v_BlackRecordX.size(); i++){
 
     cv::circle(img,cv::Point(v_BlackRecordX[i],v_BlackRecordY[i]),100,cv::Scalar(0,255,0) ,5);
+    cout << "Black Bad Pixel :" << "\t" << "X-axis=" << v_BlackRecordX[i] << "\t" << "y-axis=" <<v_BlackRecordY[i] << endl; 
     
     
   }// for int i

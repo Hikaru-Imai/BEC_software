@@ -15,11 +15,11 @@ import random
 from config import makeroot
 from config import Detection
 from config import Print
-
+from config import BackEndMode
 def dirdialog_clicked():
     iDir = "/Users/hikaru/Desktop/BEX/software"
     iDirPath = filedialog.askdirectory(initialdir = iDir)
-    DirEn.set(iDirPath)
+    DirStr.set(iDirPath)
 
 
 def filedialog_clicked():
@@ -30,6 +30,11 @@ def filedialog_clicked():
 
 def Detection_clicked():
     Detection(NameStr.get(),ThrStr.get(),SigmaStr.get())
+
+
+def  BackEndMode_clicked():
+    BackEndMode(ThrStr.get(),SigmaStr.get(),DirStr.get())
+    print(DirStr.get())
 
 
 def makeroot_clicked():
@@ -52,17 +57,19 @@ def Exit():
 root  = tk.Tk()
 
 root.title("BEC_software")
-root.geometry("700x300")
+root.geometry("800x500")
 
 
 #label
 
+DirNameLa = tk.Label(text = 'Target Dir')
 NameLa = tk.Label(text = 'photoname')
 ThrLa  = tk.Label(text = 'threshold')
 SigmaLa  = tk.Label(text = 'sigma')
 
 
 
+DirNameLa.place(x=20,y=40)
 NameLa.place(x=20,y=70)
 ThrLa.place(x=20,y=130)
 SigmaLa.place(x=20,y=170)
@@ -72,9 +79,10 @@ SigmaLa.place(x=20,y=170)
 
 # Entry
 
-NameStr = tk.StringVar()
-ThrStr = tk.StringVar()
-SigmaStr = tk.StringVar()
+DirStr    = tk.StringVar()
+NameStr   = tk.StringVar()
+ThrStr    = tk.StringVar()
+SigmaStr  = tk.StringVar()
 
 
 # set initial parameter.defult parameter
@@ -83,12 +91,12 @@ NameStr.set("")
 ThrStr.set("70")
 SigmaStr.set("5")
 
-DirEn = tk.Entry(width = 45)
-NameEn = tk.Entry(width = 65,textvariable = NameStr)
-SetThrEn = tk.Entry(textvariable = ThrStr,width = 5)
+DirEn      = tk.Entry(width = 65,textvariable= DirStr)
+NameEn     = tk.Entry(width = 65,textvariable = NameStr)
+SetThrEn   = tk.Entry(textvariable = ThrStr,width = 5)
 SetSigmaEn = tk.Entry(textvariable = SigmaStr,width = 5)
 
-#DirEn.place(x =110,y = 40)
+DirEn.place(x =110,y = 40)
 NameEn.place(x =110,y = 70)
 SetThrEn.place(x=110,y=130)
 SetSigmaEn.place(x=110,y=170)
@@ -99,6 +107,9 @@ SetSigmaEn.place(x=110,y=170)
 
 
 RunBu  = tk.Button(text = "RUN",height = 5,width = 10,command = Detection_clicked,fg='black',bg = 'red')
+BackEndBu  = tk.Button(text = "Backend mode",height = 5,width = 10,command = BackEndMode_clicked,fg='black',bg = 'blue')
+
+BrowsedirBu = tk.Button(text = "Browse",command = dirdialog_clicked )
 BrowseBu = tk.Button(text = "Browse",command = filedialog_clicked )
 ROOTBu = tk.Button(text = "ROOT",height = 5,width = 10,command = makeroot_clicked)
 PrintBu = tk.Button(text = "BINARY",height = 5,width = 10,command = Print_clicked)
@@ -106,8 +117,10 @@ PrintBu = tk.Button(text = "BINARY",height = 5,width = 10,command = Print_clicke
 ExitBu = tk.Button(text = "exit",command = Exit,width = 6) 
 
 ExitBu.place(x=480,y = 10)
+BrowsedirBu.place(x =600,y =40 )
 BrowseBu.place(x =600,y =70 )
 RunBu.place( x= 550,y = 130 )
+BackEndBu.place( x= 550,y = 230 )
 ROOTBu.place( x= 250,y = 130 )
 PrintBu.place( x= 400,y = 130 )
 

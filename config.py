@@ -285,12 +285,11 @@ def BackEndMode(thr,sigma,TargetDir):
                 
                 # write out setting file    
                 fout = open("setting.txt","wt")
-
                 outputname = "/Users/hikaru/Desktop/BEX/software/output/C__"+dataname # Mac
                 #outputname = "C:/Users/sphen/Desktop/BEC/output/C__"+dataname # win10 ver
 
                 times = sigma
-                fout.write(dataname+"\n")
+                fout.write(TargetDir+"/"+dataname+"\n")
                 fout.write(str(thr)+"\n")
                 fout.write(str(times)+"\n")
                 fout.write(outputname+"\n")
@@ -307,5 +306,5 @@ def BackEndMode(thr,sigma,TargetDir):
 
         time.sleep(1)
 
-        if debugcount>5:
+        if debugcount>20:
             break
