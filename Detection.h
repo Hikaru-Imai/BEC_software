@@ -482,7 +482,7 @@ void Detection(){
 
     cv::circle(img,cv::Point(v_WhiteRecordX[i],v_WhiteRecordY[i]),75,cv::Scalar(0,0,255) ,5);
 
-    cout << "White Bad Pixel :" << "\t" << "X-axis=" << v_WhiteRecordX[i] << "\t" <<"y-axis="  <<v_WhiteRecordY[i] << endl; 
+    //  cout << "White Bad Pixel :" << "\t" << "X-axis=" << v_WhiteRecordX[i] << "\t" <<"y-axis="  <<v_WhiteRecordY[i] << endl; 
     
     
   }// for int i
@@ -491,7 +491,7 @@ void Detection(){
   for(int i =0;i < v_BlackRecordX.size(); i++){
 
     cv::circle(img,cv::Point(v_BlackRecordX[i],v_BlackRecordY[i]),100,cv::Scalar(0,255,0) ,5);
-    cout << "Black Bad Pixel :" << "\t" << "X-axis=" << v_BlackRecordX[i] << "\t" << "y-axis=" <<v_BlackRecordY[i] << endl; 
+    //    cout << "Black Bad Pixel :" << "\t" << "X-axis=" << v_BlackRecordX[i] << "\t" << "y-axis=" <<v_BlackRecordY[i] << endl; 
     
     
   }// for int i
@@ -501,7 +501,7 @@ void Detection(){
   // output
 
   //  string outputdir = "/Users/hikaru/Desktop/BEX/software/output/";
-
+  cv::rotate(img,img,cv::ROTATE_90_CLOCKWISE ) ;
   cv::imwrite(outputname,img);
   cout <<"OutPut"<<"\t" <<outputname << endl;
 

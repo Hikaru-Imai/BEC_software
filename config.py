@@ -279,6 +279,8 @@ def BackEndMode(thr,sigma,TargetDir):
             if( FileNumInTarDir[0] != FileNumInTarDir[1]):
 
 
+                time.sleep(1)
+
                 NowFileNameInTarDir = os.listdir(TargetDir)
                 difflist = list(set(NowFileNameInTarDir)^set(FileNameInTarDir) )
                 dataname = str(difflist[0])
@@ -304,7 +306,6 @@ def BackEndMode(thr,sigma,TargetDir):
                 FileNameInTarDir = NowFileNameInTarDir
 
 
-        time.sleep(1)
 
         if debugcount>20:
             break
