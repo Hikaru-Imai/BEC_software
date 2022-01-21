@@ -435,9 +435,12 @@ void Detection(){
     int col = num % ColSize;
     int row=  num / ColSize;
     num++;
+    
     if((row%2) == 1){
-      continue;
+      
+        continue;
     }//if
+    
     //  cout << "row=" << row << endl; 
 
     
@@ -457,8 +460,8 @@ void Detection(){
     if(STRIP){
 
       
-      dilation(v_strip); // noise cut
-      erosion(v_strip); // noise cut
+      //dilation(v_strip); // noise cut
+      //erosion(v_strip); // noise cut
 
       Cycle(v_strip,v_whitelength,v_whitecenter,v_blacklength,v_blackcenter); // count White & Black line pixel
       Judge(v_whitelength,v_WhiteRecordX,v_WhiteRecordY,v_whitecenter,row,times); // write out white Bad pixel
@@ -487,7 +490,11 @@ void Detection(){
 
     cv::circle(img,cv::Point(v_WhiteRecordX[i],v_WhiteRecordY[i]),75,cv::Scalar(0,0,255) ,5);
 
+<<<<<<< HEAD
+   // cout << "White Bad Pixel :" << "\t" << "X-axis=" << v_WhiteRecordX[i] << "\t" <<"y-axis="  <<v_WhiteRecordY[i] << endl; 
+=======
     //  cout << "White Bad Pixel :" << "\t" << "X-axis=" << v_WhiteRecordX[i] << "\t" <<"y-axis="  <<v_WhiteRecordY[i] << endl; 
+>>>>>>> bc3bf0a31f883c94ac8aff371483ed2f85fe44ff
     
     
   }// for int i
@@ -495,8 +502,13 @@ void Detection(){
   
   for(int i =0;i < v_BlackRecordX.size(); i++){
 
+<<<<<<< HEAD
+    cv::circle(img,cv::Point(v_BlackRecordX[i],v_BlackRecordY[i]),100,cv::Scalar(0,255,0) ,5);
+   // cout << "Black Bad Pixel :" << "\t" << "X-axis=" << v_BlackRecordX[i] << "\t" << "y-axis=" <<v_BlackRecordY[i] << endl; 
+=======
     cv::circle(img,cv::Point(v_BlackRecordX[i],v_BlackRecordY[i]),100,cv::Scalar(0,0,255) ,5);
     //    cout << "Black Bad Pixel :" << "\t" << "X-axis=" << v_BlackRecordX[i] << "\t" << "y-axis=" <<v_BlackRecordY[i] << endl; 
+>>>>>>> bc3bf0a31f883c94ac8aff371483ed2f85fe44ff
     
     
   }// for int i
@@ -506,7 +518,11 @@ void Detection(){
   // output
 
   //  string outputdir = "/Users/hikaru/Desktop/BEX/software/output/";
+<<<<<<< HEAD
+  cv::rotate(img, img, cv::ROTATE_90_CLOCKWISE);
+=======
   cv::rotate(img,img,cv::ROTATE_90_CLOCKWISE ) ;
+>>>>>>> bc3bf0a31f883c94ac8aff371483ed2f85fe44ff
   cv::imwrite(outputname,img);
   cout <<"OutPut"<<"\t" <<outputname << endl;
 

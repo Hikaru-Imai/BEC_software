@@ -16,6 +16,7 @@ from config import makeroot
 from config import Detection
 from config import Print
 from config import BackEndMode
+from config import stop_backend
 def dirdialog_clicked():
     iDir = "/Users/hikaru/Desktop/BEX/software"
     iDirPath = filedialog.askdirectory(initialdir = iDir)
@@ -32,10 +33,18 @@ def Detection_clicked():
     Detection(NameStr.get(),ThrStr.get(),SigmaStr.get())
 
 
-def  BackEndMode_clicked():
-    BackEndMode(ThrStr.get(),SigmaStr.get(),DirStr.get())
-    print(DirStr.get())
 
+def  BackEndMode_clicked():
+    
+    #BackEndMode(ThrStr.get(),SigmaStr.get(),DirStr.get())
+    startcmd = ["start"]
+    cmd = ["start","cmd","/k","python","BackEnd.py",ThrStr.get(),SigmaStr.get(),DirStr.get()]
+    #sp.run(startcmd,shell=True)
+    sp.run(cmd,shell=True)
+    #print(DirStr.get())
+
+def stop_backend_clicked():
+    stop_backend()
 
 def makeroot_clicked():
     makeroot(NameStr.get())
@@ -106,8 +115,9 @@ SetSigmaEn.place(x=110,y=170)
 # Button
 
 
-RunBu  = tk.Button(text = "RUN",height = 5,width = 10,command = Detection_clicked,fg='black',bg = 'red')
-BackEndBu  = tk.Button(text = "Backend mode",height = 5,width = 10,command = BackEndMode_clicked,fg='black',bg = 'blue')
+RunBu  = tk.Button(text = "RUN",height = 5,width = 10,command = Detection_clicked,fg='black',bg = 'gray')
+BackEndBu  = tk.Button(text = "Backend mode",height = 5,width = 10,command = BackEndMode_clicked,fg='black',bg = 'spring green')
+stopBackEndBu  = tk.Button(text = "stop Backend \n mode",height = 5,width = 10,command = stop_backend_clicked,fg='white',bg = 'red')
 
 BrowsedirBu = tk.Button(text = "Browse",command = dirdialog_clicked )
 BrowseBu = tk.Button(text = "Browse",command = filedialog_clicked )
@@ -116,13 +126,14 @@ PrintBu = tk.Button(text = "BINARY",height = 5,width = 10,command = Print_clicke
 
 ExitBu = tk.Button(text = "exit",command = Exit,width = 6) 
 
-ExitBu.place(x=480,y = 10)
+ExitBu.place(x=620,y = 10)
 BrowsedirBu.place(x =600,y =40 )
 BrowseBu.place(x =600,y =70 )
 RunBu.place( x= 550,y = 130 )
-BackEndBu.place( x= 550,y = 230 )
+BackEndBu.place( x= 400,y = 230 )
+stopBackEndBu.place( x= 550,y = 230 )
 ROOTBu.place( x= 250,y = 130 )
-PrintBu.place( x= 400,y = 130 )
+PrintBu.place( x= 400,y = 130 )# todo change name to binary
 
 
 
