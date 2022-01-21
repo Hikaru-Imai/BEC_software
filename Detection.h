@@ -439,8 +439,13 @@ void Detection(){
       continue;
     }//if
     //  cout << "row=" << row << endl; 
-    int satu = hsv.at<cv::Vec3b>(row,col)[1]; // 0 ,1 ,2 means hue,saturation,gray
 
+    
+    cv::Vec3b* p_val = hsv.ptr<cv::Vec3b>(row);
+    cv::Vec3b hsv_3b  = p_val[col];
+
+
+    int satu = (int)hsv_3b[1];
     
     // push back pixel value
     val = Binary(satu,thr);    
