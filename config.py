@@ -194,25 +194,26 @@ def Print(dataname,thr):
         # rotate photo
         print("Rotate photo")
         pixel.rotate()
-        bgr = pixel.read();
+        bgr = pixel.read()
 
 
    
  
     thr = int(thr)
-    ret,satu1 = cv2.threshold(satu,50,255,cv2.THRESH_BINARY)
-    ret,satu2 = cv2.threshold(satu,100,255,cv2.THRESH_BINARY)
-    ret,gray = cv2.threshold(gray,240,255,cv2.THRESH_BINARY)
-
-    np.savetxt("./sataBINARY.txt",satu,fmt = "%d")
+    ret,satu1 = cv2.threshold(satu,thr,255,cv2.THRESH_BINARY)
+    #ret,satu2 = cv2.threshold(satu,100,255,cv2.THRESH_BINARY)
+    #ret,gray = cv2.threshold(gray,240,255,cv2.THRESH_BINARY)
+    
+    np.savetxt("./sataBINARY.txt",satu1,fmt = "%d")
 
     name = dataname.split("/")
     name = name[-1]
     print(name)
-    output_dire = "Users/hikaru/Desktop/BEX/software/output/"
+    #output_dire = "Users/hikaru/Desktop/BEX/software/output/"
+    output_dire = "C:Users/sphen/Desktop/BEC/output/"
     cv2.imwrite("../output/"+str(thr)+"_"+name,satu1)
 
-    cv2.imshow("print",satu)
+    cv2.imshow("print",satu1)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 #    cv2.imwrite(output_dire+"Binary"+str(thr)+name,satu)
@@ -227,8 +228,8 @@ def Detection(dataname,thr,sigma):
 
     dataname_ary = dataname.split("/")
     
-    outputname = "/Users/hikaru/Desktop/BEX/software/output/C__"+dataname_ary[-1]
-    #outputname = "C:/Users/sphen/Desktop/BEC/output/C__"+dataname_ary[-1]
+    #outputname = "/Users/hikaru/Desktop/BEX/software/output/C__"+dataname_ary[-1]
+    outputname = "C:/Users/sphen/Desktop/BEC/output/C__"+dataname_ary[-1]
     fout = open("setting.txt","wt")
     
     fout.write(dataname+"\n")
@@ -241,8 +242,8 @@ def Detection(dataname,thr,sigma):
 
 
 # Run Macro
-    cmd1 = ["./RUN"] 
-    #cmd1 = ["./Detection.exe"]
+    #cmd1 = ["./RUN"] 
+    cmd1 = ["./Detection.exe"]
     sp.run(cmd1)
 
 
@@ -264,16 +265,16 @@ def BackEndMode(thr,sigma,TargetDir):
     while True:
 
         FileNum = len(os.listdir(TargetDir))
-        print(FileNum)
+        #print(FileNum)
         FileNumInTarDir.append(FileNum)
-        
+        print("Waiting...")
         debugcount = debugcount + 1
-        print("debugcount=",debugcount)
+        #print("debugcount=",debugcount)
         if len(FileNumInTarDir) > 2 :
 
             del FileNumInTarDir[0] # delete first index
-            print(FileNumInTarDir)
-            print(FileNameInTarDir)
+            #print(FileNumInTarDir)
+            #print(FileNameInTarDir)
 
             # input new data case
             if( FileNumInTarDir[0] != FileNumInTarDir[1]):
@@ -285,8 +286,8 @@ def BackEndMode(thr,sigma,TargetDir):
                 
                 # write out setting file    
                 fout = open("setting.txt","wt")
-                outputname = "/Users/hikaru/Desktop/BEX/software/output/C__"+dataname # Mac
-                #outputname = "C:/Users/sphen/Desktop/BEC/output/C__"+dataname # win10 ver
+                #outputname = "/Users/hikaru/Desktop/BEX/software/output/C__"+dataname # Mac
+                outputname = "C:/Users/sphen/Desktop/BEC/output/C__"+dataname # win10 ver
 
                 times = sigma
                 fout.write(TargetDir+"/"+dataname+"\n")
@@ -297,14 +298,24 @@ def BackEndMode(thr,sigma,TargetDir):
                 fout.close()
 
                 print("Run Macro")
-                cmd = ["./RUN"] # for mac
-                #cmd = ["./Detection"] # for win10
-                sp.Popen(cmd)
+                #cmd = ["./RUN"] # for mac
+                cmd = ["Detection"] # for win10
+                cmdshow = [outputname]
+                time.sleep(1)
+                sp.run(cmd)
+                sp.run(cmdshow,shell = True)                
 
                 FileNameInTarDir = NowFileNameInTarDir
 
 
         time.sleep(1)
-
-        if debugcount>20:
+        
+        if debugcount>100:
             break
+
+
+def stop_backend():
+    file = open("stop.txt","wt")
+    file.close()
+
+
