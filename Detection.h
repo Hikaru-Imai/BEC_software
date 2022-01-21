@@ -477,7 +477,7 @@ void Detection(){
 
 
   //marking
-
+  /*
   for(int i =0;i < v_WhiteRecordX.size(); i++){
 
     cv::circle(img,cv::Point(v_WhiteRecordX[i],v_WhiteRecordY[i]),75,cv::Scalar(0,0,255) ,5);
@@ -486,16 +486,16 @@ void Detection(){
     
     
   }// for int i
-
-
+  */
+  
   for(int i =0;i < v_BlackRecordX.size(); i++){
 
-    cv::circle(img,cv::Point(v_BlackRecordX[i],v_BlackRecordY[i]),100,cv::Scalar(0,255,0) ,5);
+    cv::circle(img,cv::Point(v_BlackRecordX[i],v_BlackRecordY[i]),100,cv::Scalar(0,0,255) ,5);
     //    cout << "Black Bad Pixel :" << "\t" << "X-axis=" << v_BlackRecordX[i] << "\t" << "y-axis=" <<v_BlackRecordY[i] << endl; 
     
     
   }// for int i
-
+  
   
 
   // output
